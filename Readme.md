@@ -3,6 +3,7 @@
 This gem enables model based subdomains for a rails app.
 It was inspired by [semaperepelitsa/subdomain_locale](https://github.com/semaperepelitsa/subdomain_locale) gem.
 
+[![Build Status](https://travis-ci.org/nfweb/subdomain_site.svg?branch=master)](https://travis-ci.org/nfweb/subdomain_site)
 [![Code Climate](https://codeclimate.com/github/nfweb/subdomain_site/badges/gpa.svg)](https://codeclimate.com/github/nfweb/subdomain_site)
 
 ## Setup
