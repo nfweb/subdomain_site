@@ -69,8 +69,8 @@ Could not run on Rails 4.0 because of some dependency conflict with tzinfo-data.
 It should also run with Rails 3.2 without major difficulties, just have to change the active model integration.
 
 ```
-gem install isolate
-rake test:all
+gem install bundler
+rake test
 ```
 
 ## Changelog

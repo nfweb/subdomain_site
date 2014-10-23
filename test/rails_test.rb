@@ -1,6 +1,5 @@
 # encoding: UTF-8
 require_relative 'test_helper'
-require 'test/dummy/app/controllers/sites_controller'
 
 class SitesControllerTest < ActionController::TestCase
   setup do
