@@ -48,7 +48,7 @@ Add a subdomain constraint to your routing file. You may use ``SubdomainSite::Co
 MyApp::Application.routes.draw do
   constraints SubdomainSite::Constraint.new do
     resources 'post'
-    get '/', 'site#show', :as => 'site'
+    get '/', 'site#show', as: 'site'
   end
 end
 ```

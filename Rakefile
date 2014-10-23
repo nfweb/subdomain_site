@@ -1,6 +1,6 @@
-require "rake/testtask"
-require "isolate/now"
-require "bundler/gem_tasks"
+require 'rake/testtask'
+require 'isolate/now'
+require 'bundler/gem_tasks'
 
 Rake::TestTask.new do |t|
   t.test_files = Dir['test/**/*_test.rb']
@@ -11,12 +11,12 @@ Rake::TestTask.new do |t|
   t.libs << '.'
 end
 
-task "test:all" do
-  sh "rake test"
+task 'test:all' do
+  sh 'rake test'
   puts
-  sh "rake test RAILS=4.0"
+  sh 'rake test RAILS=4.0'
   puts
-  sh "rake test RAILS=3.2"
+  sh 'rake test RAILS=3.2'
 end
 
-task :default => :test
+task default: :test

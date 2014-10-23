@@ -1,6 +1,6 @@
 module SubdomainSite
   class << self
-    attr_accessor :default_site
+    attr_accessor :default_site, :default_subdomain
     attr_reader :site_model
   end
 
@@ -12,7 +12,7 @@ module SubdomainSite
     end
   end
   def self.site_model=(site_model)
-    site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) or site_model.nil?
+    site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) || site_model.nil?
     @site_model = site_model
   end
   def self.subdomain_for(site)
@@ -37,7 +37,7 @@ module SubdomainSite
 
   def self.with_site(tmp_site = nil)
     if tmp_site
-      current_site = self.site
+      current_site = site
       self.site    = tmp_site
     end
     yield

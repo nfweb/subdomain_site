@@ -6,7 +6,7 @@ module SubdomainSite
       def acts_as_site_member(options = {})
         include SubdomainSite::ActsAsSiteMember::LocalInstanceMethods
 
-        options = { :site => options } if options.is_a?(Symbol) or options.is_a?(String)
+        options = { site: options } if options.is_a?(Symbol) || options.is_a?(String)
 
         options[:site] ||= :site
 

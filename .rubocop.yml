@@ -1,0 +1,13 @@
+
+AllCops:
+  Exclude:
+    - 'tmp/**/*'
+
+Metrics/LineLength:
+  Max: 99
+
+Style/EndOfLine:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

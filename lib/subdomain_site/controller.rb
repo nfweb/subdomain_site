@@ -8,7 +8,7 @@ module SubdomainSite
       SubdomainSite.site
     end
 
-  private
+    private
 
     def set_site
       site = SubdomainSite.site_for(request.subdomain)

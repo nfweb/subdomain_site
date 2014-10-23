@@ -1,4 +1,4 @@
-require "subdomain_site/acts_as_site_member"
+require 'subdomain_site/acts_as_site_member'
 class Post
   include ActiveModel::Model
   include SubdomainSite::ActsAsSiteMember

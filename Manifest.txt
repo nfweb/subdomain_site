@@ -9,7 +9,6 @@ lib/subdomain_site/base.rb
 lib/subdomain_site/constraint.rb
 lib/subdomain_site/controller.rb
 lib/subdomain_site/core.rb
-lib/subdomain_site/mapping.rb
 lib/subdomain_site/railtie.rb
 lib/subdomain_site/url_for.rb
 subdomain_site.gemspec

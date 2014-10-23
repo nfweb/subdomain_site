@@ -14,7 +14,7 @@ module SubdomainSite
         # Site specified, force full URL
         site = options.delete(:site)
         options[:subdomain] = SubdomainSite.subdomain_for(site)
-        # TODO update for options[:routing_type] = :path
+        # TODO: update for options[:routing_type] = :path
         options[:only_path] = current_site?(site) && options[:only_path].present? && options[:only_path]
       end
 

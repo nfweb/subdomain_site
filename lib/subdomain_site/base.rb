@@ -3,6 +3,7 @@ module SubdomainSite
     def site?
       false
     end
+
     def site_member?
       false
     end
