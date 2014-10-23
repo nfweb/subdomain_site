@@ -20,14 +20,17 @@ module SubdomainSite
         options[:subdomain] = SubdomainSite.subdomain_for(site)
 
         if Gem::Version.new(Rails.version) < Gem::Version.new('4.2.0beta1')
-          # TODO: update for options[:routing_type] = :path
           options[:only_path] = current_site?(site) && options[:only_path].present? && options[:only_path]
         else
           url_strategy = ActionDispatch::Routing::RouteSet::FULL unless current_site?(site)
         end
       end
 
-      super(options, route_name, url_strategy)
+      if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
+        super
+      else
+        super(options)
+      end
     end
 
     # def default_url_options
