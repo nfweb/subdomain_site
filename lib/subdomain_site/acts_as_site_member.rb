@@ -8,7 +8,7 @@ module SubdomainSite
 
         options = { :site => options } if options.is_a?(Symbol) or options.is_a?(String)
 
-        options[:site] = :site if options[:site].nil?
+        options[:site] ||= :site
 
         class_eval do
           require 'active_model'
