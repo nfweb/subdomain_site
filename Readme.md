@@ -1,81 +1,70 @@
-# Subdomain Locale (for Rails)
+# Rails Subdomain Site
 
-A multi-language website requires some way to detect a user's locale.
-Subdomain is one option.
+This gem enables model based subdomains for a rails app.
+It was inspired by [semaperepelitsa/subdomain_locale](https://github.com/semaperepelitsa/subdomain_locale) gem.
 
 ## Setup
 
-Add the gem to your Gemfile. Set a default subdomain.
+Add the gem to your Gemfile.
+
+Set a reference to the site model in your application configuration
 
 ```ruby
 # config/application.rb
-
-# I18n library now recommends you to enforce available locales.
-config.i18n.enforce_available_locales = true
-config.i18n.available_locales = :en, :ru
-
-# See "Configuration" for difference between these:
-config.default_locale = :ru
-config.i18n.default_locale = :en
+config.site_model = Site
 ```
-
-Subdomains will now determine the current locale:
-
-* Selected locale (:en) http://en.example.com/
-* Default locale (:ru) http://example.com/
-
-Add links to the new subdomains using :locale URL parameter:
-
-```erb
-<% [:ru, :en].each do |locale| %>
-  <%= link_to locale, params.merge(locale: locale) %>
-<% end %>
-```
-
-## Configuration
-
-You can hook a special subdomain name with a locale:
+### Site Model
+Your model ist set up quite easily, just include ``acts_as_site`` in your ActiveRecord (or ActiveModel) class.
 
 ```ruby
-config.subdomain_locale["us"] = :"en-US" # us.lvh.me
-config.subdomain_locale["ca"] = :"en-CA" # ca.lvh.me
-config.subdomain_locale["ua"] = :uk      # ua.lvh.me
+class Site < ActiveRecord::Base
+  acts_as_site
+
+  # use a different attribute for subdomain
+  acts_as_site :slug
+end
 ```
 
-Default locale will link to the default subdomain (main domain by default: lvh.me).
-If you prefer "www" use this config option:
+SubdomainSite will by default use the attribute ``subdomain`` to store the subdomain value, but you may provide a different attribute as parameter to ``acts_as_site``.
+
+### Member Model
+``acts_as_site_member`` lets you define a model whose content belongs to a site and is therefore bound to the subdomain.
 
 ```ruby
-config.default_subdomain = "www"
+class Post < ActiveRecord::Base
+  has_one :site
+  acts_as_site_member
+
+  # use a different attribute for site
+  has_one :parent
+  acts_as_site_member :parent
+end
 ```
 
-English developers prefer to see English in console and other places.
-This is why we have a separate default locale for the website:
+### Routing
+Add a subdomain constraint to your routing file. You may use ``SubdomainSite::Constraint`` or implement your own subdomain matcher.
 
 ```ruby
-config.default_locale = :ru
-config.i18n.default_locale = :en
-```
-
-For example, with this config example.com will be in Russian,
-while validation errors in console are still in English.
-
-
-You can also override our controller method to completely ignore subdomain locale.
-For example, if you want admin panel to always be in English:
-
-```ruby
-class AdminController
-  # This is alrady an around_filter
-  def set_locale(&block)
-    I18n.with_locale(:en, &block)
+MyApp::Application.routes.draw do
+  constraints SubdomainSite::Constraint.new do
+    resources 'post'
+    get '/', 'site#show', :as => 'site'
   end
 end
 ```
 
+The usual url helpers (``url_for``, ``#{model}_url``) will automatically include the subdomain if you provide a site or site member object as argument.
+
+### Controller
+
+Inside your controller the current site is accesible through the helper ```current_site```.
+
 ## Testing
 
-This gem is tested against Rails 3.2, 4.0 and 4.1.
+This gem is tested against Rails 4.1.
+
+Could not run on Rails 4.0 because of some dependency conflict with tzinfo-data.
+It should also run with Rails 3.2 without major difficulties, just have to change the active model integration.
 
 ```
 gem install isolate
@@ -84,6 +73,9 @@ rake test:all
 
 ## Changelog
 
+0.0.1 Initial release
+
+### ```subdomain_locale```
 1.1.0
 
 * Custom subdomain provided in your default_url_options now has precedence over the default subdomain-locale.
@@ -95,7 +87,7 @@ rake test:all
 * No subdomain is now deafult instead of "www". Can be reverted by setting config.default\_domain.
 * Separate website's default locale (config.default\_locale) from the global default locale (config.i18n.default\_locale).
 * Test gem in the whole Rails stack (3.2, 4.0).
-* Add config.subdomain_locale for indirect mapping ("us" => :"en-US").
+* Add config.subdomain_local for indirect mapping ("us" => :"en-US").
 
 0.1.1
 
