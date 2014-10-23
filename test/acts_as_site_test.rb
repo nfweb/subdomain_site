@@ -11,6 +11,10 @@ class ActsAsSiteTest < ActiveSupport::TestCase
     def initialize(subdomain)
       self.subdomain = subdomain
     end
+
+    def persisted?
+      true
+    end
   end
 
   class Site
@@ -21,6 +25,10 @@ class ActsAsSiteTest < ActiveSupport::TestCase
 
     def initialize(subdomain = nil)
       self.slug = subdomain
+    end
+
+    def persisted?
+      true
     end
   end
 
@@ -63,7 +71,11 @@ class ActsAsSiteTest < ActiveSupport::TestCase
   class UrlTest < ActiveSupport::TestCase
     module UrlFor
       def url_for(*args)
-        args
+        params = args.first
+        if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
+          params[:only_path] = args.third == ActionDispatch::Routing::RouteSet::PATH
+        end
+        params
       end
     end
 
@@ -88,22 +100,22 @@ class ActsAsSiteTest < ActiveSupport::TestCase
 
     def test_site_url_different_site
       @actual = polymorphic_url(Site.new(:linus))
-      assert_equal [{ subdomain: 'linus', only_path: false }], @actual
+      assert_equal({ subdomain: 'linus', only_path: false }, @actual)
     end
 
     def test_site_path_different_site
       @actual = polymorphic_path(Site.new(:linus))
-      assert_equal [{ subdomain: 'linus', only_path: false }], @actual
+      assert_equal({ subdomain: 'linus', only_path: false }, @actual)
     end
 
     def test_site_url_same_site
       @actual = polymorphic_url(current_site)
-      assert_equal [{ subdomain: 'peter', only_path: false }], @actual
+      assert_equal({ subdomain: 'peter', only_path: false }, @actual)
     end
 
     def test_site_path_same_site
       @actual = polymorphic_path(current_site)
-      assert_equal [{ subdomain: 'peter', only_path: true }], @actual
+      assert_equal({ subdomain: 'peter', only_path: true }, @actual)
     end
   end
 end

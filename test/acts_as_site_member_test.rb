@@ -5,6 +5,7 @@ require 'subdomain_site/acts_as_site_member'
 
 class ActsAsSiteMemberTest < ActiveSupport::TestCase
   class Post
+    include ActiveModel::Model
     include SubdomainSite::Base
     include SubdomainSite::ActsAsSiteMember
     attr_accessor :site
@@ -12,15 +13,24 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     def initialize(site = nil)
       @site = site
     end
+
+    def persisted?
+      true
+    end
   end
 
   class Site
+    include ActiveModel::Model
     include SubdomainSite::Base
     include SubdomainSite::ActsAsSite
     attr_accessor :subdomain
     acts_as_site :subdomain
     def initialize(subdomain = nil)
       @subdomain = subdomain
+    end
+
+    def persisted?
+      true
     end
   end
 
@@ -44,7 +54,11 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
   class UrlTest < ActiveSupport::TestCase
     module UrlFor
       def url_for(*args)
-        args
+        params = args.first
+        if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
+          params[:only_path] = args.third != ActionDispatch::Routing::RouteSet::FULL
+        end
+        params
       end
     end
 
@@ -80,25 +94,25 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     def test_url_different_site
       @post = Post.new(other_site)
       @actual = polymorphic_url(@post)
-      assert_equal [post_params_url('linus')], @actual
+      assert_equal post_params_url('linus'), @actual
     end
 
     def test_path_different_site
       @post = Post.new(other_site)
       @actual = polymorphic_path(@post)
-      assert_equal [post_params_url('linus')], @actual
+      assert_equal post_params_url('linus'), @actual
     end
 
     def test_url_same_site
       @post = Post.new(current_site)
       @actual = polymorphic_url(@post)
-      assert_equal [post_params_url('peter')], @actual
+      assert_equal post_params_url('peter'), @actual
     end
 
     def test_path_same_site
       @post = Post.new(current_site)
       @actual = polymorphic_path(@post)
-      assert_equal [post_params_url('peter', true)], @actual
+      assert_equal post_params_url('peter', true), @actual
     end
   end
 end

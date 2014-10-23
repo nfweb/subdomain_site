@@ -3,7 +3,11 @@ require_relative 'test_helper'
 class UrlForTest < ActiveSupport::TestCase
   module UrlFor
     def url_for(*args)
-      args
+      params = args.first
+      if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
+        params[:only_path] = args.third != ActionDispatch::Routing::RouteSet::FULL
+      end
+      params
     end
   end
 
@@ -16,37 +20,37 @@ class UrlForTest < ActiveSupport::TestCase
 
   def test_no_site
     @actual = url_for(foo: 'bar')
-    assert_equal [{ foo: 'bar' }], @actual
+    assert_equal({ foo: 'bar' }, @actual)
   end
 
   def test_same_site
     @actual = url_for(foo: 'bar', site: :peter)
-    assert_equal [{ foo: 'bar', subdomain: 'peter', only_path: false }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'peter', only_path: false }, @actual)
   end
 
   def test_same_site_path
     @actual = url_for(foo: 'bar', site: :peter, only_path: true)
-    assert_equal [{ foo: 'bar', subdomain: 'peter', only_path: true }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'peter', only_path: true }, @actual)
   end
 
   def test_same_site_url
     @actual = url_for(foo: 'bar', site: :peter, only_path: false)
-    assert_equal [{ foo: 'bar', subdomain: 'peter', only_path: false }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'peter', only_path: false }, @actual)
   end
 
   def test_different_site
     @actual = url_for(foo: 'bar', site: :paul)
-    assert_equal [{ foo: 'bar', subdomain: 'paul', only_path: false }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'paul', only_path: false }, @actual)
   end
 
   def test_different_site_url
     @actual = url_for(foo: 'bar', site: :paul, only_path: true)
-    assert_equal [{ foo: 'bar', subdomain: 'paul', only_path: false }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'paul', only_path: false }, @actual)
   end
 
   def test_different_site_path
     @actual = url_for(foo: 'bar', site: :paul, only_path: false)
-    assert_equal [{ foo: 'bar', subdomain: 'paul', only_path: false }], @actual
+    assert_equal({ foo: 'bar', subdomain: 'paul', only_path: false }, @actual)
   end
 
   def test_hash_immutable

@@ -4,6 +4,7 @@ require 'subdomain_site/railtie'
 
 module Dummy
   class Application < Rails::Application
+    config.active_support.test_order = :sorted
     config.i18n.enforce_available_locales = false
     config.i18n.available_locales = ['en']
     config.i18n.default_locale = :en
