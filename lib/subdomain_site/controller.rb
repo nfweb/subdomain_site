@@ -1,15 +1,19 @@
-module SubdomainLocale
+module SubdomainSite
   module Controller
     def self.included(base)
-      base.around_filter :set_locale
+      base.around_filter :set_site
     end
 
-    private
+    def current_site
+      SubdomainSite.site
+    end
 
-    def set_locale
-      locale = SubdomainLocale.mapping.locale_for(request.subdomain)
-      locale = SubdomainLocale.default_fallback(locale)
-      I18n.with_locale(locale) { yield }
+  private
+
+    def set_site
+      site = SubdomainSite.site_for(request.subdomain)
+      site = SubdomainSite.default_fallback(site)
+      SubdomainSite.with_site(site) { yield }
     end
   end
 end

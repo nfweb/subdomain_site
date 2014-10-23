@@ -1,0 +1,93 @@
+require_relative "test_helper"
+require "subdomain_site/base"
+require "subdomain_site/acts_as_site"
+require "subdomain_site/acts_as_site_member"
+
+class ActsAsSiteMemberTest < ActiveSupport::TestCase
+  class Post
+    include SubdomainSite::Base
+    include SubdomainSite::ActsAsSiteMember
+    attr_accessor :site
+    acts_as_site_member
+    def initialize(site = nil)
+      @site = site
+    end
+  end
+  class Site
+    include SubdomainSite::Base
+    include SubdomainSite::ActsAsSite
+    attr_accessor :subdomain
+    acts_as_site :subdomain
+    def initialize(subdomain = nil)
+      @subdomain = subdomain
+    end
+  end
+
+  def default_testing(post)
+    assert post.site_member?
+    refute post.site?
+    assert_respond_to post, :site
+  end
+
+  def test_post
+    post = Post.new
+    default_testing(post)
+    refute post.valid?
+    post.site = Site.new
+    assert post.valid?
+  end
+  def test_validation
+  end
+
+  class UrlTest < ActiveSupport::TestCase
+    module UrlFor
+      def url_for(*args)
+        args
+      end
+    end
+
+    def acts_as_site_member_test_post_url(post, options = {})
+      options[:site] = post.site
+      options[:post] = post.to_param
+      url_for(options)
+    end
+    def acts_as_site_member_test_post_path(post, options = {})
+      options[:site] = post.site
+      options[:post] = post.to_param
+      options[:only_path] = true
+      url_for(options)
+    end
+
+    include UrlFor
+    include SubdomainSite::UrlFor
+    include ActionDispatch::Routing::PolymorphicRoutes
+
+    def current_site
+      @current_site ||= Site.new(:peter)
+    end
+    def other_site
+      @other_site ||= Site.new(:linus)
+    end
+
+    def test_url_different_site
+      @post = Post.new(other_site)
+      @actual = polymorphic_url(@post)
+      assert_equal [{post: @post.to_param, subdomain: "linus", only_path: false}], @actual
+    end
+    def test_path_different_site
+      @post = Post.new(other_site)
+      @actual = polymorphic_path(@post)
+      assert_equal [{post: @post.to_param, subdomain: "linus", only_path: false}], @actual
+    end
+    def test_url_same_site
+      @post = Post.new(current_site)
+      @actual = polymorphic_url(@post)
+      assert_equal [{post: @post.to_param, subdomain: "peter", only_path: false}], @actual
+    end
+    def test_path_same_site
+      @post = Post.new(current_site)
+      @actual = polymorphic_path(@post)
+      assert_equal [{post: @post.to_param, subdomain: "peter", only_path: true}], @actual
+    end
+  end
+end

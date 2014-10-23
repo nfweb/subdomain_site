@@ -1,0 +1,5 @@
+<ul>
+  <% @sites.each do |site| %>
+    <li><%= link_to site.subdomain, url_for(site) %></li>
+  <% end %>
+</ul>

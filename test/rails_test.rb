@@ -1,61 +1,41 @@
 # encoding: UTF-8
 require_relative "test_helper"
+require "test/dummy/app/controllers/sites_controller"
 
-class HelloControllerTest < ActionController::TestCase
-  def test_links
-    @request.host = "ru.example.com"
-    get :world
-    menu = css_select("menu a")
-    assert_equal "/", menu[0]["href"]
-    assert_equal "http://en.example.com/", menu[1]["href"]
-    assert_equal "http://example.com/",  menu[2]["href"]
-    assert_equal "http://ua.example.com/",  menu[3]["href"]
-    assert_equal "http://beta.example.com/",  menu[4]["href"]
+class SitesControllerTest < ActionController::TestCase
+  setup do
+    @controller = SitesController.new
   end
 
-  def test_default
-    @request.host = "example.com"
-    get :world
-    assert_response :ok
-    assert_select "p", "Привет"
+  def domain
+    "example.com"
   end
 
-  def test_direct
-    @request.host = "en.example.com"
-    get :world
-    assert_response :ok
-    assert_select "p", "Hello"
+  test "get index" do
+    @request.host = domain
+    get "index"
+    assert_response :success
+    assert_not_nil assigns(:sites)
+    links = css_select("ul li a")
+    urls = Site.sites.map { | k, s | "http://#{s.subdomain}.#{domain}/" }
+    links.each do | a |
+      assert_includes urls, a["href"]
+    end
   end
 
-  def test_custom
-    @request.host = "ua.example.com"
-    get :world
-    assert_response :ok
-    assert_select "p", "Привіт"
+  test "get site" do
+    site = Site.example
+    @request.host = "#{site.subdomain}.#{domain}"
+    get :show
+
+    assert_response :success
+    assert_equal site, assigns(:site)
+    assert_equal site.subdomain.to_s, css_select("h1").first.children.first.content
   end
 
-  def test_locale_after_action
-    @request.host = "ru.example.com"
-    get :world
-    assert_equal :en, I18n.locale
+  test "get undefined site" do
+    @request.host = "udefined.#{domain}"
+    get :show
   end
 
-  def test_other
-    @request.host = "wtf.example.com"
-    get :world
-    assert_select "p", "Привет"
-  end
-end
-
-class HelloMailerTest < ActionController::TestCase
-  def test_locale_domain
-    mail = I18n.with_locale(:uk) { HelloMailer.world }
-    assert_equal "http://ua.example.com/", mail.body.to_s.lines[3].chomp
-  end
-
-  # BetaMailer overrides default_url_options
-  def test_custom_domain
-    mail = I18n.with_locale(:uk) { BetaMailer.world }
-    assert_equal "http://beta.example.com/", mail.body.to_s.lines[3].chomp
-  end
 end
