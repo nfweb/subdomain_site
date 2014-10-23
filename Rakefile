@@ -13,10 +13,10 @@ end
 
 task 'test:all' do
   sh 'rake test'
-  puts
-  sh 'rake test RAILS=4.0'
-  puts
-  sh 'rake test RAILS=3.2'
+  #puts
+  #sh 'rake test RAILS=4.0'
+  #puts
+  #sh 'rake test RAILS=3.2'
 end
 
 task default: :test

@@ -1,0 +1,13 @@
+language: ruby
+rvm:
+  - "2.1.1"
+  - "2.0.0"
+  - "1.9.3"
+  - jruby-19mode # JRuby in 1.9 mode
+# uncomment this line if your project needs to run something other than `rake`:
+# script: bundle exec rspec spec
+install: gem install isolate
+env:
+  - "rails=4.1"
+  #- "rails=4.0"
+  #- "rails=4.2"
