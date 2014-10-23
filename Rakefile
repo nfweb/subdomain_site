@@ -1,4 +1,5 @@
 require 'rake/testtask'
+require 'rubygems'
 require 'isolate/now'
 require 'bundler/gem_tasks'
 
