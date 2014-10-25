@@ -36,35 +36,34 @@ class ActsAsSiteTest < ActiveSupport::TestCase
     assert site.site_member?
     assert site.site?
     assert_equal site.site, site
-    assert_respond_to site, :subdomain
-    assert_respond_to site, :subdomain=
   end
 
   def test_simple_site
     site = SimpleSite.new(:peter)
     default_testing(site)
+
     site.subdomain = 'PETER'
-    assert_equal 'peter', site.subdomain
+    assert_equal 'peter', site.to_param
   end
 
   def test_complex_site
     site = Site.new
     default_testing(site)
-    refute site.valid?
+    assert_not site.valid?
 
-    site.subdomain = 'PETER'
-    assert_equal 'peter', site.subdomain
+    site.slug = 'PETER'
+    assert_equal 'peter', site.to_param
   end
 
   def test_validation
     site = Site.new
     [:peter, 'linus', 'Anacletus', '0test', '0', 'test0', 'a' * 63, 'A' * 63].each do | s |
-      site.subdomain = s
+      site.slug = s
       assert site.valid?, "Expected #{s} to be a valid subdomain"
     end
-    [nil, '_', 'öäü', 'test&', 'test%', '_peter', :peter_, 'a' * 64].each do | s |
-      site.subdomain = s
-      refute site.valid?, "Expected \"#{s}\" to be an invalid subdomain"
+    [nil, '_', 'öäü', 'test&', 'test%', '_peter', :peter_, 'a' * 64, ''].each do | s |
+      site.slug = s
+      assert_not site.valid?, "Expected \"#{s}\" to be an invalid subdomain"
     end
   end
 

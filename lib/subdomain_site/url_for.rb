@@ -17,7 +17,7 @@ module SubdomainSite
       if options.key?(:site)
         # Site specified, force full URL
         site = options.delete(:site)
-        options[:subdomain] = SubdomainSite.subdomain_for(site)
+        options[:subdomain] = site.to_param
 
         if Gem::Version.new(Rails.version) < Gem::Version.new('4.2.0beta1')
           options[:only_path] = current_site?(site) && options[:only_path].present? && options[:only_path]
@@ -35,7 +35,7 @@ module SubdomainSite
 
     # def default_url_options
     #   super.merge({
-    #     subdomain: SubdomainSite.subdomain_for(current_site)
+    #     subdomain: current_site.to_param
     #   })
     # end
 

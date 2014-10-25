@@ -29,15 +29,15 @@ module SubdomainSite
               val = val.to_s.downcase unless val.nil?
               send "#{options[:subdomain_attr]}_without_downcase=", val
             end
-            alias_method_chain "#{options[:subdomain_attr]}=", :downcase
+            # FIXME: does not work with activerecord
+            alias_method_chain "#{options[:subdomain_attr]}=", :downcase if method_defined? "#{options[:subdomain_attr]}="
 
-            if options[:subdomain_attr] != :subdomain
-              alias_method :subdomain, options[:subdomain_attr]
-              alias_method :subdomain=, "#{options[:subdomain_attr]}="
+            define_method :to_param do
+              (send options[:subdomain_attr]).to_s
             end
-
           end
         end
+
         @subdomain_attr = options[:subdomain_attr]
 
         # There should usually only be one model representing subsites
