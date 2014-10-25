@@ -2,6 +2,7 @@ module SubdomainSite
   module Controller
     def self.included(base)
       base.around_filter :set_site
+      base.helper_method :current_site
     end
 
     def current_site
