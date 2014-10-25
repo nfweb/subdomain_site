@@ -74,6 +74,10 @@ gem install bundler
 rake test
 ```
 
+## Notable Other Solutions
+* [consolo/acts_as_restricted_subdomain](https://github.com/consolo/acts_as_restricted_subdomain) (Rails 3.1)
+* [fortuity/subdomain-authentication](https://github.com/fortuity/subdomain-authentication) (Rails 2.3)
+
 ## Changelog
 
 0.0.1 Initial release
