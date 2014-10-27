@@ -68,6 +68,10 @@ module SubdomainSite
       def site_member?
         true
       end
+
+      def default_url_options
+        { subdomain: to_param }
+      end
     end
   end
 

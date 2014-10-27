@@ -15,10 +15,14 @@ module SubdomainSite
       end
 
       if options.key?(:site)
-        # Site specified, force full URL
         site = options.delete(:site)
-        options[:subdomain] = site.to_param
 
+        site_options = site.default_url_options if site.respond_to? :default_url_options
+        site_options ||= { subdomain: site.to_param }
+
+        options.reverse_merge! site_options
+
+        # if site specified force full URL
         if Gem::Version.new(Rails.version) < Gem::Version.new('4.2.0beta1')
           options[:only_path] = current_site?(site) && options[:only_path].present? && options[:only_path]
         else
