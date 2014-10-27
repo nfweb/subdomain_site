@@ -4,10 +4,13 @@ AllCops:
     - 'tmp/**/*'
 
 Metrics/LineLength:
-  Max: 99
+  Max: 110
 
 Style/EndOfLine:
   Enabled: false
 
 Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
   Enabled: false
