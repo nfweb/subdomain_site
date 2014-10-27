@@ -60,6 +60,7 @@ class ActionDispatch::Routing::RouteSet::NamedRouteCollection
         options = options.dup
         if args.first.respond_to?(:site_member?) && args.first.site_member?
           options[:site] = args.first.site
+          args.shift if args.first.respond_to?(:site?) && args.first.site?
         end
         handle_positional_args_without_site(t, args, options, keys)
       end
@@ -67,6 +68,7 @@ class ActionDispatch::Routing::RouteSet::NamedRouteCollection
       def handle_positional_args_with_site(controller_options, inner_options, args, result, path_params)
         if args.first.respond_to?(:site_member?) && args.first.site_member?
           result[:site] = args.first.site
+          args.shift if args.first.respond_to?(:site?) && args.first.site?
         end
         handle_positional_args_without_site(controller_options, inner_options, args, result, path_params)
       end
