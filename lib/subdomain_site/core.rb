@@ -1,7 +1,8 @@
 module SubdomainSite
   class << self
-    attr_accessor :default_site, :default_subdomain
+    attr_accessor :default_subdomain
     attr_reader :site_model
+    attr_writer :default_site
   end
 
   def self.default_fallback(site)
@@ -11,6 +12,7 @@ module SubdomainSite
       default_site
     end
   end
+
   def self.site_model=(site_model)
     site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) || site_model.nil?
     @site_model = site_model
@@ -19,13 +21,19 @@ module SubdomainSite
   def self.site_for(subdomain)
     site_model.find_by_subdomain(subdomain)
   end
+
   def self.site_available?(site)
     site.present?
   end
 
+  def self.default_site
+    @default_site = @default_site.call if @default_site.respond_to? :call
+    @default_site
+  end
+
   # Gets current site
   def self.site
-    Thread.current[:subdomain_site] ||= SubdomainSite.default_site
+    Thread.current[:subdomain_site] ||= default_site
   end
   # Sets current site
   def self.site=(value)
