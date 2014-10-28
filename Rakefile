@@ -15,3 +15,7 @@ Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
 end
+
+require 'annotations/rake_task'
+
+Annotations::RakeTask.new
