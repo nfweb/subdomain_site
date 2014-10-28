@@ -48,7 +48,7 @@ module SubdomainSite
     end
 
     def current_site?(site)
-      current_site.to_s == site.to_s
+      current_site == site
     end
   end
 end
