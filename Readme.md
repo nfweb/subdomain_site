@@ -10,12 +10,16 @@ It was inspired by [semaperepelitsa/subdomain_locale](https://github.com/semaper
 
 Add the gem to your Gemfile.
 
-Set a reference to the site model in your application configuration
+Set a reference to the site model in your application configuration.
 
 ```ruby
 # config/application.rb
 config.site_model = Site
+
+# optional: set a default site. It is important to write as lambda to be lazy loaded
+config.default_site = -> { Site.first }
 ```
+
 ### Site Model
 Your model ist set up quite easily, just include ``acts_as_site`` in your ActiveRecord (or ActiveModel) class.
 
@@ -28,7 +32,10 @@ class Site < ActiveRecord::Base
 end
 ```
 
-SubdomainSite will by default use the attribute ``subdomain`` to store the subdomain value, but you may provide a different attribute as parameter to ``acts_as_site``.
+SubdomainSite will by default use the attribute ``#subdomain`` to store the subdomain value, but you may provide a different attribute as parameter to ``acts_as_site``.
+
+You might want to override the following instance methods
+* ``#default_url_options``: provides default url options for the site. Return value should include ```:subdomain`` key
 
 ### Member Model
 ``acts_as_site_member`` lets you define a model whose content belongs to a site and is therefore bound to the subdomain.
