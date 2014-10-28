@@ -47,12 +47,10 @@ module SubdomainSite
 
       def find_by_subdomain(subdomain, params = {})
         subdomain.downcase!
-        # provide some simple caching since site lookups happen very frequently
-        @subdomains ||= {}
 
-        return @subdomains[subdomain] if @subdomains.key?(subdomain) && params.empty?
+        # TODO: enable some kind of caching
 
-        @subdomains[subdomain] = find_by(params.merge(@subdomain_attr => subdomain))
+        find_by(params.merge(@subdomain_attr => subdomain))
       end
     end
 
