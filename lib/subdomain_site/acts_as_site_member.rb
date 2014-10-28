@@ -16,6 +16,7 @@ module SubdomainSite
 
           validates_presence_of options[:site]
 
+          # TODO: add site access for descendants of direct site members
           alias_method :site, options[:site].to_sym if options[:site] != :site
 
         end

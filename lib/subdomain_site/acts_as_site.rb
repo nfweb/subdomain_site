@@ -82,6 +82,10 @@ module SubdomainSite
       true
     end
 
+    def readonly?
+      true
+    end
+
     def subdomain
       SubdomainSite.default_subdomain
     end
