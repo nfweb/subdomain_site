@@ -10,50 +10,50 @@ module SubdomainSite
     attr_accessor :default_subdomain
     attr_reader :site_model
     attr_writer :default_site
-  end
 
-  def self.default_fallback(site)
-    if site_available?(site)
-      site
-    else
-      default_site
+    def default_fallback(site)
+      if site_available?(site)
+        site
+      else
+        default_site
+      end
     end
-  end
 
-  def self.site_model=(site_model)
-    site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) || site_model.nil?
-    @site_model = site_model
-  end
-
-  def self.site_for(subdomain)
-    site_model.find_by_subdomain(subdomain)
-  end
-
-  def self.site_available?(site)
-    site.present?
-  end
-
-  def self.default_site
-    @default_site = @default_site.call if @default_site.respond_to? :call
-    @default_site
-  end
-
-  # Gets current site
-  def self.site
-    Thread.current[:subdomain_site] ||= default_site
-  end
-  # Sets current site
-  def self.site=(value)
-    Thread.current[:subdomain_site] = value
-  end
-
-  def self.with_site(tmp_site = nil)
-    if tmp_site
-      current_site = site
-      self.site    = tmp_site
+    def site_model=(site_model)
+      site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) || site_model.nil?
+      @site_model = site_model
     end
-    yield
-  ensure
-    self.site = current_site if tmp_site
+
+    def site_for(subdomain)
+      site_model.find_by_subdomain(subdomain)
+    end
+
+    def site_available?(site)
+      site.present?
+    end
+
+    def default_site
+      @default_site = @default_site.call if @default_site.respond_to? :call
+      @default_site
+    end
+
+    # Gets current site
+    def site
+      Thread.current[:subdomain_site] ||= default_site
+    end
+    # Sets current site
+    def site=(value)
+      Thread.current[:subdomain_site] = value
+    end
+
+    def with_site(tmp_site = nil)
+      if tmp_site
+        current_site = site
+        self.site    = tmp_site
+      end
+      yield
+    ensure
+      self.site = current_site if tmp_site
+    end
   end
 end

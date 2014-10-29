@@ -17,4 +17,3 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activemodel', '~>4.1'
 end
-

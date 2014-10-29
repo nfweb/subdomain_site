@@ -1,5 +1,4 @@
 require_relative 'test_helper'
-require 'subdomain_site/acts_as_site'
 
 class ActsAsSiteTest < ActiveSupport::TestCase
   class SimpleSite

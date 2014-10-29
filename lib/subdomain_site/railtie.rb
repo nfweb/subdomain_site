@@ -2,11 +2,9 @@ require 'rails/railtie'
 
 module SubdomainSite
   class Railtie < ::Rails::Railtie
-    require 'subdomain_site/acts_as_site'
-
     config.subdomain_site = {}
     config.default_subdomain = ''
-    config.default_site = SubdomainSite::DefaultSite.new
+    config.default_site = -> { SubdomainSite::DefaultSite.new }
     config.site_model = nil
 
     # Execute after all application initializers, I18n is often configured there.

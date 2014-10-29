@@ -1,6 +1,6 @@
 module SubdomainSite
   class Constraint
-    def inizialize(params = {})
+    def initialize(params = {})
       @params = params
     end
 

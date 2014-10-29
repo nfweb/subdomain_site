@@ -1,4 +1,5 @@
 require_relative 'test_helper'
+
 require 'subdomain_site/base'
 require 'subdomain_site/acts_as_site'
 require 'subdomain_site/acts_as_site_member'
@@ -10,6 +11,7 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     include SubdomainSite::ActsAsSiteMember
     attr_accessor :site
     acts_as_site_member
+
     def initialize(site = nil)
       @site = site
     end
