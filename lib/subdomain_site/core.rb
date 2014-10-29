@@ -1,4 +1,11 @@
 module SubdomainSite
+  SUBDOMAIN_LENGTH = 1..63
+  SUBDOMAIN_PATTERN = /\A[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\z/i
+
+  # Internal implementations of ActionDispatch::Routing::RouteSet::NamedRouteCollection::UrlHelper
+  # have changed in Rails 4.2, so we need to distinguish versions in several places.
+  RAILS42 = Rails.gem_version >= Gem::Version.new('4.2.0beta1')
+
   class << self
     attr_accessor :default_subdomain
     attr_reader :site_model

@@ -11,10 +11,13 @@ module SubdomainSite
 
     # Execute after all application initializers, I18n is often configured there.
     config.after_initialize do |app|
-      require 'subdomain_site/core'
       SubdomainSite.default_site = app.config.default_site || nil
       SubdomainSite.site_model   = app.config.site_model || nil
       SubdomainSite.default_subdomain = app.config.default_subdomain || nil
+    end
+
+    initializer 'subdomain_site.core' do
+      require 'subdomain_site/core'
     end
 
     initializer 'subdomain_site.url_helpers' do
@@ -34,7 +37,7 @@ module SubdomainSite
     end
 
     initializer 'subdomain_site.acts_as_site' do
-      ActiveSupport.on_load :active_record do
+      ActiveSupport.on_load :active_model do
         require 'subdomain_site/base'
         require 'subdomain_site/acts_as_site'
         require 'subdomain_site/acts_as_site_member'

@@ -4,7 +4,7 @@ class UrlForTest < ActiveSupport::TestCase
   module UrlFor
     def url_for(*args)
       params = args.first
-      if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
+      if SubdomainSite::RAILS42
         params[:only_path] = args.third != ActionDispatch::Routing::RouteSet::FULL
       end
       params

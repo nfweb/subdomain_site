@@ -8,49 +8,42 @@ module SubdomainSite
 
         options = { subdomain_attr: options } unless options.is_a?(Hash)
         options[:subdomain_attr] ||= :subdomain
-        options[:subdomain_attr] = options[:subdomain_attr].to_sym unless options[:subdomain_attr].nil?
+        @subdomain_attr = options[:subdomain_attr].to_sym
 
-        if options[:subdomain_attr]
-          class_eval do
-            require 'active_model'
-            include ActiveModel::Validations
+        class_eval do
+          require 'active_model'
+          include ActiveModel::Validations
 
-            validates_presence_of options[:subdomain_attr]
-            validates_length_of   options[:subdomain_attr], in: 1..63
-            validates_format_of   options[:subdomain_attr],
-                with: /\A[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\z/i,
-                message: 'Subdomains must contain only alpha-numericals or hyphens but may neither begin nor end with a hyphen'
+          validates @subdomain_attr, subdomain_attr_validations
 
-            if respond_to? :validates_uniqueness_of
-              validates_uniqueness_of options[:subdomain_attr], case_sensitive: false
-            end
+          if constants.include?(:ActiveRecord) && include?(::ActiveRecord::Base)
+            instance_eval "def #{@subdomain_attr}= (value); write_attribute(#{@subdomain_attr}, filter_subdomain_value(value)); end"
+          end
 
-            define_method "#{options[:subdomain_attr]}_with_downcase=" do |val|
-              val = val.to_s.downcase unless val.nil?
-              send "#{options[:subdomain_attr]}_without_downcase=", val
-            end
-            # FIXME: does not work with activerecord
-            alias_method_chain "#{options[:subdomain_attr]}=", :downcase if method_defined? "#{options[:subdomain_attr]}="
+          def find_by_subdomain(subdomain, params = {})
+            subdomain.downcase!
 
-            define_method :to_param do
-              (send options[:subdomain_attr]).to_s
-            end
+            # TODO: enable some kind of caching
+
+            find_by(params.merge(@subdomain_attr => subdomain))
           end
         end
 
-        @subdomain_attr = options[:subdomain_attr]
+        class_eval "def to_param; filter_subdomain_value(#{@subdomain_attr}); end"
 
         # There should usually only be one model representing subsites
         # but this automatic setting interferes with test suites.
         # SubdomainSite.site_model = self
       end
 
-      def find_by_subdomain(subdomain, params = {})
-        subdomain.downcase!
-
-        # TODO: enable some kind of caching
-
-        find_by(params.merge(@subdomain_attr => subdomain))
+      def subdomain_attr_validations
+        vals = { presence: true,
+                 length: { in: SubdomainSite::SUBDOMAIN_LENGTH },
+                 format: { with: SubdomainSite::SUBDOMAIN_PATTERN,
+                           message: 'Subdomains must contain only alpha-numericals or hyphens but may neither begin nor end with a hyphen' }
+               }
+        vals[:uniqueness] = { case_sensitive: false } if respond_to? :validates_uniqueness_of
+        vals
       end
     end
 
@@ -69,6 +62,10 @@ module SubdomainSite
 
       def default_url_options
         { subdomain: to_param }
+      end
+
+      def filter_subdomain_value(val)
+        val.to_s.downcase unless val.nil?
       end
     end
   end
