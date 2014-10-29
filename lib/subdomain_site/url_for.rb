@@ -4,6 +4,8 @@ module SubdomainSite
     def url_for(options, route_name = nil, url_strategy = nil)
       options = options.dup
 
+      url_strategy = ActionDispatch::Routing::RouteSet::UNKNOWN if SubdomainSite::RAILS42 && url_strategy.nil?
+
       if options.key?(:site)
         site = options.delete(:site)
 
@@ -12,11 +14,15 @@ module SubdomainSite
 
         options.reverse_merge! site_options
 
+        if options.key? :only_path
+          options[:only_path] = current_site?(site) && options[:only_path]
+        end
+
         # if site specified force full URL
         if SubdomainSite::RAILS42
           url_strategy = ActionDispatch::Routing::RouteSet::FULL unless current_site?(site)
         else
-          options[:only_path] = current_site?(site) && options[:only_path].present? && options[:only_path]
+          options[:only_path] ||= false unless current_site?(site)
         end
       end
 

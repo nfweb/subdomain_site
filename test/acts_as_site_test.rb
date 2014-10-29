@@ -67,15 +67,6 @@ class ActsAsSiteTest < ActiveSupport::TestCase
   end
 
   class UrlTest < ActiveSupport::TestCase
-    module UrlFor
-      def url_for(*args)
-        params = args.first
-        if Gem::Version.new(Rails.version) >= Gem::Version.new('4.2.0beta1')
-          params[:only_path] = args.third == ActionDispatch::Routing::RouteSet::PATH
-        end
-        params
-      end
-    end
 
     def acts_as_site_test_site_url(site, options = {})
       options[:site] = site
@@ -88,7 +79,7 @@ class ActsAsSiteTest < ActiveSupport::TestCase
       url_for(options)
     end
 
-    include UrlFor
+    include SubdomainSite::Test::UrlFor
     include SubdomainSite::UrlFor
     include ActionDispatch::Routing::PolymorphicRoutes
 

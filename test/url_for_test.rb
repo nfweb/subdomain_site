@@ -1,17 +1,7 @@
 require_relative 'test_helper'
 
 class UrlForTest < ActiveSupport::TestCase
-  module UrlFor
-    def url_for(*args)
-      params = args.first
-      if SubdomainSite::RAILS42
-        params[:only_path] = args.third != ActionDispatch::Routing::RouteSet::FULL
-      end
-      params
-    end
-  end
-
-  include UrlFor
+  include SubdomainSite::Test::UrlFor
   include SubdomainSite::UrlFor
 
   def current_site
