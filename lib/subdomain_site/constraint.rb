@@ -1,6 +1,7 @@
 module SubdomainSite
   class Constraint
     def initialize(params = {})
+      params[:type] = params[:type].name if params.key?(:type) && params[:type].kind_of?(Class)
       @params = params
     end
 
@@ -11,7 +12,7 @@ module SubdomainSite
     private
 
     def find(subdomain)
-      SubdomainSite.site_model.find_by_subdomain(subdomain, @params)
+      SubdomainSite.site_model.find_subdomain_site(subdomain, @params)
     end
   end
 end
