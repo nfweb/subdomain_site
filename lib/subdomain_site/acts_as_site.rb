@@ -3,7 +3,6 @@ module SubdomainSite
     extend ActiveSupport::Concern
 
     module ClassMethods
-
       def acts_as_site(options = {})
         include SubdomainSite::ActsAsSite::LocalInstanceMethods
 
@@ -17,7 +16,7 @@ module SubdomainSite
         include ActiveModel::Validations
         include ActiveModel::Validations::Callbacks
 
-        validates self.subdomain_attr, subdomain_attr_validations
+        validates subdomain_attr, subdomain_attr_validations
         before_validation :downcase_subdomain
 
         # There should usually only be one model representing subsites
@@ -37,7 +36,7 @@ module SubdomainSite
 
       def find_subdomain_site(subdomain, params = {})
         # TODO: enable some kind of caching
-        find_by(params.merge(self.subdomain_attr => subdomain.downcase))
+        find_by(params.merge(subdomain_attr => subdomain.downcase))
       end
     end
 

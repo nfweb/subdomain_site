@@ -1,7 +1,7 @@
 module SubdomainSite
   class Constraint
     def initialize(params = {})
-      params[:type] = params[:type].name if params.key?(:type) && params[:type].kind_of?(Class)
+      params[:type] = params[:type].name if params.key?(:type) && params[:type].is_a?(Class)
       @params = params
     end
 
