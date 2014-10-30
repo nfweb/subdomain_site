@@ -1,7 +1,7 @@
 module SubdomainSite
   module Controller
     def self.included(base)
-      base.around_filter :set_site
+      base.around_filter :with_site
       base.helper_method :current_site
     end
 
@@ -11,7 +11,7 @@ module SubdomainSite
 
     private
 
-    def set_site
+    def with_site
       site = SubdomainSite.site_for(request.subdomain)
       site = SubdomainSite.default_fallback(site)
       SubdomainSite.with_site(site) { yield }
