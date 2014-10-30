@@ -12,12 +12,17 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     attr_accessor :site
     acts_as_site_member
 
-    def initialize(site = nil)
+    def initialize(site = nil, id = 1)
       @site = site
+      @id = id
     end
 
     def persisted?
       true
+    end
+
+    def to_param
+      @id
     end
   end
 
