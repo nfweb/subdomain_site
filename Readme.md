@@ -71,7 +71,7 @@ Inside your controller the current site is accesible through the helper ```curre
 
 ## Testing
 
-This gem is tested against Rails 4.1.
+This gem is tested against Rails 4.2
 
 Could not run on Rails 4.0 because of some dependency conflict with tzinfo-data.
 It should also run with Rails 3.2 without major difficulties, just have to change the active model integration.
