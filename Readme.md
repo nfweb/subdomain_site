@@ -81,6 +81,12 @@ gem install bundler
 rake test
 ```
 
+Test with Ruby 4.1 Gemset
+
+```
+BUNDLE_GEMFILE=gemfiles/rails41.gemfile bundle exec rake test
+```
+
 ## Notable Other Solutions
 * [consolo/acts_as_restricted_subdomain](https://github.com/consolo/acts_as_restricted_subdomain) (Rails 3.1)
 * [fortuity/subdomain-authentication](https://github.com/fortuity/subdomain-authentication) (Rails 2.3)

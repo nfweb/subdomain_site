@@ -68,12 +68,10 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     def acts_as_site_member_test_post_path(post, options = {})
       options[:site] = post.site
       options[:post] = post.to_param
-      options[:only_path] = true
-      url_for(options)
+      url_for(options, nil, :path)
     end
 
-    include SubdomainSite::Test::UrlFor
-    include SubdomainSite::UrlFor
+    include SubdomainSite::Test::UrlForWrapper
     include ActionDispatch::Routing::PolymorphicRoutes
 
     def current_site
@@ -84,32 +82,32 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
       @other_site ||= Site.new :linus
     end
 
-    def post_params_url(subdomain, only_path = false)
-      { post: @post.to_param, subdomain: subdomain, only_path: only_path }
+    def post_params_url(subdomain, url_strategy = :unknown)
+      [{ post: @post.to_param, subdomain: subdomain }, url_strategy]
     end
 
     def test_url_different_site
       @post = Post.new(other_site)
       @actual = polymorphic_url(@post)
-      assert_equal post_params_url('linus'), @actual
+      assert_equal post_params_url('linus', :full), @actual
     end
 
     def test_path_different_site
       @post = Post.new(other_site)
       @actual = polymorphic_path(@post)
-      assert_equal post_params_url('linus'), @actual
+      assert_equal post_params_url('linus', :full), @actual
     end
 
     def test_url_same_site
       @post = Post.new(current_site)
       @actual = polymorphic_url(@post)
-      assert_equal post_params_url('peter'), @actual
+      assert_equal post_params_url('peter', :unknown), @actual
     end
 
     def test_path_same_site
       @post = Post.new(current_site)
       @actual = polymorphic_path(@post)
-      assert_equal post_params_url('peter', true), @actual
+      assert_equal post_params_url('peter', :path), @actual
     end
   end
 end

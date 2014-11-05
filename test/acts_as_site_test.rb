@@ -67,44 +67,41 @@ class ActsAsSiteTest < ActiveSupport::TestCase
   end
 
   class UrlTest < ActiveSupport::TestCase
-
-    def acts_as_site_test_site_url(site, options = {})
-      options[:site] = site
-      url_for(options)
-    end
-
-    def acts_as_site_test_site_path(site, options = {})
-      options[:site] = site
-      options[:only_path] = true
-      url_for(options)
-    end
-
-    include SubdomainSite::Test::UrlFor
-    include SubdomainSite::UrlFor
+    include SubdomainSite::Test::UrlForWrapper
     include ActionDispatch::Routing::PolymorphicRoutes
 
     def current_site
       @current_site ||= Site.new(:peter)
     end
 
+    def acts_as_site_test_site_url(site, options = {})
+      options[:site] = site
+      url_for(options, nil, :unknown)
+    end
+
+    def acts_as_site_test_site_path(site, options = {})
+      options[:site] = site
+      url_for(options, nil, :path)
+    end
+
     def test_site_url_different_site
       @actual = polymorphic_url(Site.new(:linus))
-      assert_equal({ subdomain: 'linus', only_path: false }, @actual)
+      assert_equal([{ subdomain: 'linus' }, :full], @actual)
     end
 
     def test_site_path_different_site
       @actual = polymorphic_path(Site.new(:linus))
-      assert_equal({ subdomain: 'linus', only_path: false }, @actual)
+      assert_equal([{ subdomain: 'linus' }, :full], @actual)
     end
 
     def test_site_url_same_site
       @actual = polymorphic_url(current_site)
-      assert_equal({ subdomain: 'peter', only_path: false }, @actual)
+      assert_equal([{ subdomain: 'peter' }, :unknown], @actual)
     end
 
     def test_site_path_same_site
       @actual = polymorphic_path(current_site)
-      assert_equal({ subdomain: 'peter', only_path: true }, @actual)
+      assert_equal([{ subdomain: 'peter' }, :path], @actual)
     end
   end
 end

@@ -9,17 +9,55 @@ $VERBOSE = true
 
 module SubdomainSite
   module Test
-    module UrlFor
-      require 'action_dispatch/routing/route_set'
-      def url_for(*args)
-        params = args.first
-        if SubdomainSite::RAILS42
-          params[:only_path] = false if args.third == ActionDispatch::Routing::RouteSet::FULL
-          params[:only_path] = false if args.third == ActionDispatch::Routing::RouteSet::UNKNOWN
-          puts args.third.inspect unless params.key? :only_path
+    module UrlForParent
+      if SubdomainSite::RAILS42
+        def url_strategies
+          @strategies ||= {
+            full: ActionDispatch::Routing::RouteSet::FULL,
+            path: ActionDispatch::Routing::RouteSet::PATH,
+            unknown: ActionDispatch::Routing::RouteSet::UNKNOWN
+          }
         end
-        params
+
+        def url_for(options, _route_name, url_strategy)
+          [options, url_strategies.invert[url_strategy]]
+        end
+      else
+        def url_strategies
+          @strategies ||= {
+            full: :full,
+            path: :path,
+            unknown: :unknown
+          }
+        end
+
+        def url_for(options)
+          url_strategy = :unknown unless options.key? :only_path
+          url_strategy ||= options.delete(:only_path) ? :path : :full
+          [options, url_strategy]
+        end
       end
+    end
+
+    module UrlForTestChild
+      if SubdomainSite::RAILS42
+        def url_for(options, route_name = nil, url_strategy = :unknown)
+          url_strategy = url_strategies[url_strategy]
+          super
+        end
+      else
+        def url_for(options, _route_name = nil, url_strategy = :unknown)
+          options = options.dup
+          options[:only_path] = url_strategy == :path unless url_strategy == :unknown
+          super(options)
+        end
+      end
+    end
+
+    module UrlForWrapper
+      include UrlForParent
+      include ::SubdomainSite::UrlFor
+      include UrlForTestChild
     end
   end
 end
