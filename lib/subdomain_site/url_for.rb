@@ -40,12 +40,17 @@ class ActionDispatch::Routing::RouteSet::NamedRouteCollection
     if SubdomainSite::RAILS42
       def handle_positional_args_with_site(controller_options, inner_options, args, result, path_params)
         result.merge! prepare_site_options(args)
+
+        # ATTENTION: might be unsuspected behaviour, but the controller options need to be able to
+        # override route options and site options (e.g. subdomain, locale)
+        result.merge! controller_options
+
         handle_positional_args_without_site(controller_options, inner_options, args, result, path_params)
       end
     else
       def handle_positional_args_with_site(t, args, options, keys)
         options = options.dup
-        options.merge prepare_site_options(args)
+        options.merge! prepare_site_options(args)
         handle_positional_args_without_site(t, args, options, keys)
       end
     end
