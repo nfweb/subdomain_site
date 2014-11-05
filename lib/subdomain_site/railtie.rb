@@ -35,6 +35,14 @@ module SubdomainSite
     end
 
     initializer 'subdomain_site.acts_as_site' do
+      ActiveSupport.on_load :active_record do
+        require 'subdomain_site/base'
+        require 'subdomain_site/acts_as_site'
+        require 'subdomain_site/acts_as_site_member'
+        include SubdomainSite::Base
+        include SubdomainSite::ActsAsSite
+        include SubdomainSite::ActsAsSiteMember
+      end
       ActiveSupport.on_load :active_model do
         require 'subdomain_site/base'
         require 'subdomain_site/acts_as_site'

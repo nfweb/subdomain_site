@@ -28,7 +28,8 @@ module SubdomainSite
         vals = { presence: true,
                  length: { in: SubdomainSite::SUBDOMAIN_LENGTH },
                  format: { with: SubdomainSite::SUBDOMAIN_PATTERN,
-                           message: 'Subdomains must contain only alpha-numericals or hyphens but may neither begin nor end with a hyphen' }
+                           message: 'Subdomains must contain only alpha-numericals or ' \
+                                    'hyphens but may neither begin nor end with a hyphen' }
                }
         vals[:uniqueness] = { case_sensitive: false } if respond_to? :validates_uniqueness_of
         vals
@@ -36,7 +37,7 @@ module SubdomainSite
 
       def find_subdomain_site(subdomain, params = {})
         # TODO: enable some kind of caching
-        find_by(params.merge(subdomain_attr => subdomain.downcase))
+        find_by(params.merge(subdomain_attr => subdomain.to_s.strip.downcase))
       end
     end
 

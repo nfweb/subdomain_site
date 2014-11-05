@@ -22,7 +22,7 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     end
 
     def to_param
-      @id
+      @id.to_s
     end
   end
 
