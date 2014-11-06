@@ -11,7 +11,7 @@ class Site
     true
   end
 
-  def self.find_by_subdomain(subdomain)
+  def self.find_subdomain_site(subdomain)
     sites[subdomain.to_sym]
   end
   def self.all

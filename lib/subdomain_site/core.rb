@@ -20,12 +20,14 @@ module SubdomainSite
     end
 
     def site_model=(site_model)
-      site_model = site_model.to_s.classify.constantize unless site_model.is_a?(Class) || site_model.nil?
+      site_model = site_model.to_s.classify.constantize unless site_model.respond_to? :find_subdomain_site
       @site_model = site_model
     end
 
-    def site_for(subdomain)
-      site_model.find_by_subdomain(subdomain)
+    def site_for(site)
+      return site.site if site.respond_to? :site
+
+      site_model.find_subdomain_site(site)
     end
 
     def site_available?(site)
@@ -47,6 +49,7 @@ module SubdomainSite
     end
 
     def with_site(tmp_site = nil)
+      tmp_site = site_for tmp_site
       if tmp_site
         current_site = site
         self.site    = tmp_site

@@ -88,5 +88,13 @@ module SubdomainSite
     def subdomain
       SubdomainSite.default_subdomain
     end
+
+    def site?
+      true
+    end
+
+    def site
+      self
+    end
   end
 end
