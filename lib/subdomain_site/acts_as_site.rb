@@ -25,7 +25,7 @@ module SubdomainSite
       end
 
       def subdomain_attr_validations
-        vals = { presence: true,
+        vals = { exclusion: { in: [nil] },
                  length: { in: SubdomainSite::SUBDOMAIN_LENGTH },
                  format: { with: SubdomainSite::SUBDOMAIN_PATTERN,
                            message: 'Subdomains must contain only alpha-numericals or ' \

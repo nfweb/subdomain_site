@@ -1,6 +1,6 @@
 module SubdomainSite
-  SUBDOMAIN_LENGTH = 1..63
-  SUBDOMAIN_PATTERN = /\A[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\z/i
+  SUBDOMAIN_LENGTH = 0..63
+  SUBDOMAIN_PATTERN = /\A(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?|)\z/i
 
   # Internal implementations of ActionDispatch::Routing::RouteSet::NamedRouteCollection::UrlHelper
   # have changed in Rails 4.2, so we need to distinguish versions in several places.

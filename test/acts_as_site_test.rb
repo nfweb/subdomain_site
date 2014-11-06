@@ -56,13 +56,13 @@ class ActsAsSiteTest < ActiveSupport::TestCase
 
   def test_validation
     site = Site.new
-    [:peter, 'linus', 'Anacletus', '0test', '0', 'test0', 'a' * 63, 'A' * 63].each do | s |
+    [:peter, 'linus', 'Anacletus', '0test', '0', 'test0', 'a' * 63, 'A' * 63, ''].each do | s |
       site.slug = s
-      assert site.valid?, "Expected #{s} to be a valid subdomain"
+      assert site.valid?, "Expected #{s.inspect} to be a valid subdomain: #{site.errors[:slug]}"
     end
-    [nil, '_', 'öäü', 'test&', 'test%', '_peter', :peter_, 'a' * 64, ''].each do | s |
+    [nil, '_', 'öäü', 'test&', 'test%', '_peter', :peter_, 'a' * 64].each do | s |
       site.slug = s
-      assert_not site.valid?, "Expected \"#{s}\" to be an invalid subdomain"
+      assert_not site.valid?, "Expected #{s.inspect} to be an invalid subdomain"
     end
   end
 
