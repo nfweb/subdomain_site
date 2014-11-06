@@ -9,12 +9,31 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     include ActiveModel::Model
     include SubdomainSite::Base
     include SubdomainSite::ActsAsSiteMember
-    attr_accessor :site
+    attr_accessor :site, :id
     acts_as_site_member
 
     def initialize(site = nil, id = 1)
-      @site = site
-      @id = id
+      super site: site, id: id
+      send :set_site_from_environment # FIXME: should not be needed to call
+    end
+
+    def persisted?
+      true
+    end
+
+    def to_param
+      @id.to_s
+    end
+  end
+  class PostWithoutDefaultSite
+    include ActiveModel::Model
+    include SubdomainSite::Base
+    include SubdomainSite::ActsAsSiteMember
+    attr_accessor :site, :id
+    acts_as_site_member set_site_from_environment: false
+
+    def initialize(site = nil, id = 1)
+      super site: site, id: id
     end
 
     def persisted?
@@ -47,8 +66,16 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     assert_respond_to post, :site
   end
 
-  def test_post
+  def test_post_with_default_site
     post = Post.new
+    default_testing(post)
+    assert post.valid?, post.errors.inspect
+    post.site = Site.new
+    assert post.valid?
+  end
+
+  def test_post_without_default_site
+    post = PostWithoutDefaultSite.new
     default_testing(post)
     refute post.valid?
     post.site = Site.new
