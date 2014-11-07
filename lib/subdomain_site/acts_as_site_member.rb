@@ -14,7 +14,9 @@ module SubdomainSite
           include ActiveModel::Validations
           include ActiveModel::Validations::Callbacks
 
-          validates_presence_of options[:site] if options[:force]
+          require 'active_model/validations/site_validator' # FIXME: does not get loaded by railties
+          validates options[:site], site: true
+          validates options[:site], presence: true if options[:force]
 
           if options[:set_site_from_environment]
             insert_after_initialize_callback unless respond_to? :after_initialize

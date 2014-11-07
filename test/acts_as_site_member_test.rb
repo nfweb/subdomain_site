@@ -70,6 +70,9 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
     post = Post.new
     default_testing(post)
     assert post.valid?, post.errors.inspect
+    post.site = true
+    assert_not post.valid?
+    assert post.errors.include? :site
     post.site = Site.new
     assert post.valid?
   end
@@ -77,7 +80,11 @@ class ActsAsSiteMemberTest < ActiveSupport::TestCase
   def test_post_without_default_site
     post = PostWithoutDefaultSite.new
     default_testing(post)
-    refute post.valid?
+    assert_not post.valid?
+    assert post.errors.include? :site
+    post.site = true
+    assert_not post.valid?
+    assert post.errors.include? :site
     post.site = Site.new
     assert post.valid?
   end
