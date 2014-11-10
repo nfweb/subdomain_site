@@ -1,3 +1,9 @@
+begin
+  require "codeclimate-test-reporter"
+  CodeClimate::TestReporter.start
+rescue LoadError
+end
+
 ENV['RAILS_ENV'] = 'test'
 
 require File.expand_path('../dummy/config/environment.rb',  __FILE__)

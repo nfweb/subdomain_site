@@ -35,6 +35,9 @@ GEM
     annotations (0.1.2)
       rake
     builder (3.2.2)
+    codeclimate-test-reporter (0.4.1)
+      simplecov (>= 0.7.1, < 1.0.0)
+    docile (1.1.5)
     erubis (2.7.0)
     globalid (0.3.0)
       activesupport (>= 4.1.0)
@@ -47,6 +50,7 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.0)
     minitest (5.4.2)
+    multi_json (1.10.1)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     rack (1.6.0.beta)
@@ -66,6 +70,11 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.3.2)
+    simplecov (0.9.1)
+      docile (~> 1.1.0)
+      multi_json (~> 1.0)
+      simplecov-html (~> 0.8.0)
+    simplecov-html (0.8.0)
     thor (0.19.1)
     thread_safe (0.3.4)
     tzinfo (1.2.2)
@@ -81,5 +90,6 @@ DEPENDENCIES
   actionpack (~> 4.2.0.beta2)
   activemodel (~> 4.2.0.beta2)
   annotations
+  codeclimate-test-reporter
   railties (~> 4.2.0.beta2)
   tzinfo-data
