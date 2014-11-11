@@ -1,8 +1,7 @@
 module SubdomainSite
   class Constraint
-    def initialize(params = {})
-      params[:type] = params[:type].name if params.key?(:type) && params[:type].is_a?(Class)
-      @params = params
+    def initialize(themodel = nil)
+      @model = themodel || SubdomainSite.site_model
     end
 
     def matches?(request)
@@ -12,7 +11,7 @@ module SubdomainSite
     private
 
     def find(subdomain)
-      SubdomainSite.site_model.find_subdomain_site(subdomain, @params)
+      @model.find_subdomain_site(subdomain)
     end
   end
 end

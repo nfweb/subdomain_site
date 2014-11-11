@@ -35,13 +35,19 @@ module SubdomainSite
         vals
       end
 
-      def find_subdomain_site(subdomain, params = {})
-        # TODO: enable some kind of caching
-        find_by(params.merge(subdomain_attr => subdomain.to_s.strip.downcase))
+      def find_subdomain_site(subdomain)
+        @subdomain_cache ||= {}
+        @subdomain_cache[subdomain] ||= find_by(subdomain_attr => filter_subdomain_value(subdomain))
+      end
+
+      def filter_subdomain_value(val)
+        val.to_s.strip.downcase unless val.nil?
       end
     end
 
     module LocalInstanceMethods
+      delegate :filter_subdomain_value, to: 'self.class'
+
       def site
         self
       end
@@ -56,10 +62,6 @@ module SubdomainSite
 
       def default_url_options
         { subdomain: to_param }
-      end
-
-      def filter_subdomain_value(val)
-        val.to_s.downcase unless val.nil?
       end
 
       def downcase_subdomain
