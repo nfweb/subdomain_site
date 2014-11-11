@@ -8,21 +8,17 @@ module SubdomainSite
 
         options = { site: options } if options.is_a?(Symbol) || options.is_a?(String)
 
-        options = options.reverse_merge(set_site_from_environment: true, site: :site, force: true)
+        options = options.reverse_merge(set_site_from_environment: false, site: :site, force: false)
 
         class_eval do
           include ActiveModel::Validations
           include ActiveModel::Validations::Callbacks
 
-          require 'active_model/validations/site_validator' # FIXME: does not get loaded by railties
+          require 'active_model/validations/site_validator' # FIXME: should get loaded by railties
           validates options[:site], site: true
           validates options[:site], presence: true if options[:force]
 
-          if options[:set_site_from_environment]
-            insert_after_initialize_callback unless respond_to? :after_initialize
-
-            after_initialize :set_site_from_environment
-          end
+          insert_after_initialize_callback if options[:set_site_from_environment]
 
           # TODO: add site access for descendants of direct site members
           alias_method :site, options[:site].to_sym if options[:site] != :site
@@ -42,7 +38,9 @@ module SubdomainSite
             end
           end
           alias_method_chain :initialize, :callback
-        end
+        end unless respond_to? :after_initialize
+
+        after_initialize :set_site_from_environment
       end
     end
 
