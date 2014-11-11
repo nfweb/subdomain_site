@@ -12,7 +12,7 @@ module SubdomainSite
     private
 
     def with_site
-      site = SubdomainSite.site_for(request.subdomain)
+      site = SubdomainSite.site_for(request.params[:site] || request.subdomain)
       site = SubdomainSite.default_fallback(site)
       SubdomainSite.with_site(site) { yield }
     end
